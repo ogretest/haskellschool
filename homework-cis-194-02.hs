@@ -69,4 +69,22 @@ solve s = result
 
 -- Exercise 8
 
-solve' = "TODO"
+solve' s = result
+  where
+    len = length s
+    all = allCodes len
+    step c cs ms = if length cs' == 1 then ms' else step c' cs' ms'
+      where
+        m = getMove s c
+        cs' = filterCodes m cs
+        ms' = ms ++ [m]
+        c' = snd (foldr (\ a (bn, bc) ->
+          let
+            bn' = foldr (\ s' ss ->
+              let
+                m' = getMove s' a
+                cs'' = filterCodes m' cs'
+              in ss + length cs'') 0 cs'
+          in if bn' < bn then (bn', a) else (bn, bc)) (9999999999, []) cs')
+    first = take len (cycle [Red, Green])
+    result = step first all []
